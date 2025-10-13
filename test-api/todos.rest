@@ -1,2 +1,5 @@
-# GET todos
+### GET all todos
 GET http://localhost:4000/todos HTTP/1.1
+
+### Get one todo
+GET http://localhost:4000/todos/1 HTTP/1.1
