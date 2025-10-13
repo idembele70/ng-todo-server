@@ -5,6 +5,7 @@ import router from './routing/index.routing.js';
 
 const app = express();
 
+app.use(express.json());
 app.use(router);
 
 const { PORT } = process.env;
