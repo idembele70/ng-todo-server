@@ -38,6 +38,15 @@ export const deleteOneTodo = async (req, res, next) => {
   }
 }
 
+export const deleteAllTodosController = async (_req, res, next) => {
+  try {
+    await db.query('DELETE FROM todos');
+    res.sendStatus(204);
+  } catch (error) {
+    next(error)
+  }
+}
+
 export const updateOneTodo = async (req, res, next) => {
   try {
 
