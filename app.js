@@ -1,14 +1,27 @@
 import 'dotenv/config';
 import express from 'express';
+import cors from 'cors';
 
-import router from './routing/index.routing.js';
+import routes from './routing/index.routing.js';
+import ipFilterMiddleware from './middleware/ip-filter.middleware.js';
+
 
 const app = express();
 
-app.use(express.json());
-app.use(router);
+const { FRONT_END_URL, PORT } = process.env;
 
-const { PORT } = process.env;
+
+app.use(cors({
+  origin: FRONT_END_URL,
+}));
+app.use(ipFilterMiddleware);
+app.use(express.json());
+app.use('/api', routes);
+
+app.use((err, _req, res, _next) => {
+  console.error(err.message);
+  res.status(500).send('An error occurred!');
+})
 
 app.listen(PORT, () => {
   console.log(`Server running on port: ${PORT}`)

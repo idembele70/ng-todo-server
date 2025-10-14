@@ -21,7 +21,8 @@ export const getOneTodo = async (req, res, next) => {
 export const addOneTodo = async (req, res, next) => {
   try {
     const { insertId } = await db.query('INSERT INTO todos (title) VALUES (?)', [req.body.title])
-    const todo = await db.query('SELECT * FROM todos WHERE id = ?', [insertId]);
+    const todos = await db.query('SELECT * FROM todos WHERE id = ?', [insertId]);
+    const todo = todos[0];
     res.status(201).json(todo);
   } catch (err) {
     next(err);
