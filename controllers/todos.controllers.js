@@ -49,7 +49,6 @@ export const deleteAllTodosController = async (_req, res, next) => {
 
 export const updateOneTodo = async (req, res, next) => {
   try {
-
     const { title, complete } = req.body;
     const { id } = req.params;
     const updates = [];
@@ -59,7 +58,7 @@ export const updateOneTodo = async (req, res, next) => {
       updates.push('title = ?');
       params.push(title);
     }
-    if (complete) {
+    if ([0, 1].includes(complete)) {
       updates.push('complete = ?');
       params.push(complete)
     }
