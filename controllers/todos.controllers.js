@@ -38,9 +38,21 @@ export const deleteOneTodo = async (req, res, next) => {
   }
 }
 
-export const deleteAllTodosController = async (_req, res, next) => {
+export const deleteAllTodosController = async (req, res, next) => {
   try {
-    await db.query('DELETE FROM todos');
+    const { completed } = req.query;
+    const sqlParts = ['DELETE FROM todos'];
+    const params = [];
+
+    if (completed) {
+      const isCompleted = completed === 'true';
+      sqlParts.push('WHERE complete = ?');
+      params.push(isCompleted ? '1' : '0');
+    }
+
+    const sql = sqlParts.join(' ');
+
+    await db.query(sql, params);
     res.sendStatus(204);
   } catch (error) {
     next(error)
