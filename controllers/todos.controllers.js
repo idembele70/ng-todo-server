@@ -60,12 +60,12 @@ export const deleteOneTodo = async (req, res, next) => {
 
 export const deleteAllTodosController = async (req, res, next) => {
   try {
-    const { completed } = req.query;
+    const { complete } = req.query;
     const sqlParts = ['DELETE FROM todos'];
     const params = [];
 
-    if (completed) {
-      const isCompleted = completed === 'true';
+    if (complete) {
+      const isCompleted = complete === 'true';
       sqlParts.push('WHERE complete = ?');
       params.push(isCompleted ? '1' : '0');
     }
