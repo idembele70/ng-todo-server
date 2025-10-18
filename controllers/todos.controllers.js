@@ -1,8 +1,28 @@
 import db from '../database/index.db.js'
 
-export const getAllTodos = async (_req, res, next) => {
+export const getAllTodos = async (req, res, next) => {
   try {
-    const todos = await db.query('SELECT * FROM todos');
+    const { complete, limit } = req.query;
+    const sqlParts = ['SELECT * FROM todos'];
+    const params = [];
+    const conditions = [];
+
+    if (complete !== undefined) {
+      const isCompleted = complete === 'true';
+      conditions.push('complete = ?')
+      params.push(isCompleted ? 1 : 0);
+    }
+
+    if (conditions.length)
+      sqlParts.push('WHERE', conditions.join(' AND '))
+
+    if (limit) {
+      sqlParts.push('LIMIT ?');
+      params.push(Number(limit));
+    }
+    const sql = sqlParts.join(' ');
+
+    const todos = await db.query(sql, params);
     res.status(200).json(todos);
   } catch (error) {
     next(error);
@@ -77,7 +97,7 @@ export const updateOneTodo = async (req, res, next) => {
     const sql = `UPDATE todos SET ${updates.join(', ')} WHERE id = ?`;
     params.push(id)
     await db.query(sql, params);
-    const updatedTodo =  await db.query('SELECT * FROM todos WHERE id = ?', [id])
+    const updatedTodo = await db.query('SELECT * FROM todos WHERE id = ?', [id])
     res.status(200).json(updatedTodo);
   } catch (error) {
     next(error);

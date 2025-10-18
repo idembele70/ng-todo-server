@@ -1,5 +1,8 @@
 ### GET all TODOS
-GET http://localhost:4000/todos HTTP/1.1
+GET http://localhost:4000/api/todos HTTP/1.1
+
+### GET completed TODOS
+GET http://localhost:4000/api/todos?completed='true'&limit=2
 
 ### GET one TODO
 GET http://localhost:4000/todos/1 HTTP/1.1
