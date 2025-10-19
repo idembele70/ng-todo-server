@@ -2,28 +2,43 @@ import db from '../database/index.db.js'
 
 export const getAllTodos = async (req, res, next) => {
   try {
-    const { complete, limit } = req.query;
+    const limit = Number(req.query.limit) || 10;
+    const page = Number(req.query.page) || 1;
+    const {
+      complete,
+    } = req.query;
+
     const sqlParts = ['SELECT * FROM todos'];
-    const params = [];
+    const countParts = ['SELECT COUNT(*) AS total FROM todos'];
     const conditions = [];
+    const sqlParams = [];
+    const countParams = [];
 
     if (complete !== undefined) {
       const isCompleted = complete === 'true';
-      conditions.push('complete = ?')
-      params.push(isCompleted ? 1 : 0);
+      conditions.push('complete = ?');
+      sqlParams.push(isCompleted ? 1 : 0);
+      countParams.push(isCompleted ? 1 : 0);
     }
 
-    if (conditions.length)
-      sqlParts.push('WHERE', conditions.join(' AND '))
-
-    if (limit) {
-      sqlParts.push('LIMIT ?');
-      params.push(Number(limit));
+    if (conditions.length) {
+      const whereClause = 'WHERE ' + conditions.join(' AND ');
+      sqlParts.push(whereClause);
+      countParts.push(whereClause);
     }
-    const sql = sqlParts.join(' ');
+    const offset = (page - 1) * limit;
+    sqlParts.push('LIMIT ? OFFSET ?');
+    sqlParams.push(limit, offset);
 
-    const todos = await db.query(sql, params);
-    res.status(200).json(todos);
+    const todos = await db.query(sqlParts.join(' '), sqlParams);
+    const [{ total }] = await db.query(countParts.join(' '), countParams);
+
+    res.status(200).json({
+      currentPage: page,
+      totalPages: Math.ceil(total / limit) || 1,
+      totalItems: total,
+      todos,
+    });
   } catch (error) {
     next(error);
   }
