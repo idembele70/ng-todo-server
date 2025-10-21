@@ -27,7 +27,7 @@ export const getAllTodos = async (req, res, next) => {
       countParts.push(whereClause);
     }
     const offset = (page - 1) * limit;
-    sqlParts.push('LIMIT ? OFFSET ?');
+    sqlParts.push('ORDER BY createdAt DESC LIMIT ? OFFSET ?');
     sqlParams.push(limit, offset);
 
     const todos = await db.query(sqlParts.join(' '), sqlParams);
@@ -98,7 +98,7 @@ export const deleteAllTodosController = async (req, res, next) => {
     }
 
     const sql = sqlParts.join(' ');
-    console.log(sql)
+
     await db.query(sql, params);
     res.sendStatus(204);
   } catch (error) {
