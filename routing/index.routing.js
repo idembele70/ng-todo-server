@@ -5,6 +5,6 @@ import todosRouter from './todos.routing.js';
 const router = express.Router();
 
 router.use(healthRouter);
-router.use(todosRouter)
+router.use('/todos', todosRouter)
 
 export default router;

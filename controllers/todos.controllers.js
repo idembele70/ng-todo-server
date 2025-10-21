@@ -53,6 +53,19 @@ export const getOneTodo = async (req, res, next) => {
   }
 }
 
+export const todoExistsByTitle = async (req, res, next) => {
+  try {
+    const { title } = req.query;
+
+    const [rows] = await db.query('SELECT COUNT(*) AS count FROM todos WHERE title = ?', [title]);
+    const exists = rows.count > 0;
+
+    res.status(200).json({ exists });
+  } catch (error) {
+    next(error);
+  }
+}
+
 export const addOneTodo = async (req, res, next) => {
   try {
     const { insertId } = await db.query('INSERT INTO todos (title) VALUES (?)', [req.body.title])
