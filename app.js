@@ -8,7 +8,7 @@ import ipFilterMiddleware from './middleware/ip-filter.middleware.js';
 
 const app = express();
 
-const { FRONT_END_URL, PORT } = process.env;
+const { FRONT_END_URL, APP_LOCAL_PORT } = process.env;
 
 
 app.use(cors({
@@ -23,6 +23,6 @@ app.use((err, _req, res, _next) => {
   res.status(500).send('An error occurred!');
 })
 
-app.listen(PORT, () => {
-  console.log(`Server running on port: ${PORT}`)
+app.listen(APP_LOCAL_PORT, () => {
+  console.log(`Server running on port: ${APP_LOCAL_PORT}`);
 })

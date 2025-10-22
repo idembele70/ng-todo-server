@@ -1,0 +1,31 @@
+services:
+
+  server_nodejs:
+    container_name: ng_todo_server
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        APP_DOCKER_PORT: ${APP_DOCKER_PORT}
+    env_file: .env
+    ports:
+      - ${APP_LOCAL_PORT}:${APP_DOCKER_PORT}
+
+  mysql:
+    image: mysql:8.1
+    container_name: ng_todo_mysql_db
+    env_file:
+      - .env
+    environment:
+      - MYSQL_ROOT_PASSWORD=${DB_ROOT_PASSWORD}
+      - MYSQL_DATABASE=${DB_NAME}
+      - MYSQL_USER=${DB_USER}
+      - MYSQL_PASSWORD=${DB_USER_PASSWORD}
+    ports:
+      - ${DB_LOCAL_PORT}:${DB_DOCKER_PORT}
+    volumes:
+      - ./docker/init.sql:/docker-entrypoint-initdb.d/init.sql
+      - mysql_db_data:/var/lib/mysql
+
+volumes:
+  mysql_db_data:
