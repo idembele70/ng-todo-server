@@ -2,6 +2,8 @@ services:
 
   server_nodejs:
     container_name: ng_todo_server
+    depends_on:
+      - mysql
     build:
       context: .
       dockerfile: Dockerfile
