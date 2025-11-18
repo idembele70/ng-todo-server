@@ -1,12 +1,12 @@
-import db from '../database/index.db.js'
+import db from '../../config/db.config.js';
 
-export const getAllTodos = async (req, res, next) => {
-  try {
-    const limit = Number(req.query.limit) || 10;
-    const page = Number(req.query.page) || 1;
+export default class TodoService {
+  static async getAll(query) {
+    const limit = Number(query.limit) || 10;
+    const page = Number(query.page) || 1;
     const {
       complete,
-    } = req.query;
+    } = query;
 
     const sqlParts = ['SELECT * FROM todos'];
     const countParts = ['SELECT COUNT(*) AS total FROM todos'];
@@ -33,62 +33,35 @@ export const getAllTodos = async (req, res, next) => {
     const todos = await db.query(sqlParts.join(' '), sqlParams);
     const [{ total }] = await db.query(countParts.join(' '), countParams);
 
-    res.status(200).json({
+    return {
       currentPage: page,
       totalPages: Math.ceil(total / limit) || 1,
       totalItems: total,
       todos,
-    });
-  } catch (error) {
-    next(error);
+    };
   }
-}
 
-export const getOneTodo = async (req, res, next) => {
-  try {
-    const todo = await db.query('SELECT * FROM todos WHERE id = ? ', [req.params.id]);
-    res.status(200).json(todo);
-  } catch (err) {
-    next(err);
+  static getOne(id) {
+    return db.query('SELECT * FROM todos WHERE id = ? ', [id]);
   }
-}
 
-export const todoExistsByTitle = async (req, res, next) => {
-  try {
-    const { title } = req.query;
-
+  static async existsByTitle(title) {
     const [rows] = await db.query('SELECT COUNT(*) AS count FROM todos WHERE title = ?', [title]);
-    const exists = rows.count > 0;
-
-    res.status(200).json({ exists });
-  } catch (error) {
-    next(error);
+    return rows.count > 0;
   }
-}
 
-export const addOneTodo = async (req, res, next) => {
-  try {
-    const { insertId } = await db.query('INSERT INTO todos (title) VALUES (?)', [req.body.title])
+  static async addOne(title) {
+    const { insertId } = await db.query('INSERT INTO todos (title) VALUES (?)', [title])
     const todos = await db.query('SELECT * FROM todos WHERE id = ?', [insertId]);
-    const todo = todos[0];
-    res.status(201).json(todo);
-  } catch (err) {
-    next(err);
+    return todos[0];
   }
-}
 
-export const deleteOneTodo = async (req, res, next) => {
-  try {
-    await db.query('DELETE FROM todos WHERE id = ?', [req.params.id]);
-    res.sendStatus(204);
-  } catch (error) {
-    next(error);
+  static async deleteOne(id) {
+    const result = await db.query('DELETE FROM todos WHERE id = ?', [id]);
+    return result.affectedRows > 0;
   }
-}
 
-export const deleteAllTodosController = async (req, res, next) => {
-  try {
-    const isCompleted = req.query.complete === 'true';
+  static async deleteAll(isCompleted) {
     const sqlParts = ['DELETE FROM todos'];
     const params = [];
 
@@ -100,16 +73,9 @@ export const deleteAllTodosController = async (req, res, next) => {
     const sql = sqlParts.join(' ');
 
     await db.query(sql, params);
-    res.sendStatus(204);
-  } catch (error) {
-    next(error)
   }
-}
 
-export const updateOneTodo = async (req, res, next) => {
-  try {
-    const { title, complete } = req.body;
-    const { id } = req.params;
+  static async updateOne({ title, complete, id }) {
     const updates = [];
     const params = [];
 
@@ -124,9 +90,7 @@ export const updateOneTodo = async (req, res, next) => {
     const sql = `UPDATE todos SET ${updates.join(', ')} WHERE id = ?`;
     params.push(id)
     await db.query(sql, params);
-    const updatedTodo = await db.query('SELECT * FROM todos WHERE id = ?', [id])
-    res.status(200).json(updatedTodo);
-  } catch (error) {
-    next(error);
+    return await db.query('SELECT * FROM todos WHERE id = ?', [id]);
+
   }
 }

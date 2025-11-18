@@ -1,4 +1,4 @@
-export const healthCheck = (_req, res) => {
+export const get = (_req, res) => {
   const health = {
     uptime: process.uptime(),
     status: 'OK',
