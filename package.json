@@ -6,7 +6,7 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "start:dev": "dotenvx run --env-file=.env -- node --watch ./src/server.js",
     "start:prod": "dotenvx run --env-file=.env.production -- node ./src/server.js",
-    "predocker:run:prod": "ENV_FILE=.env.production docker compose build --no-cache",
+    "predocker:run:prod": "docker compose down --rmi all -v && ENV_FILE=.env.production docker compose build --no-cache",
     "docker:run:prod": "ENV_FILE=.env.production docker compose up -d"
   },
   "type": "module",
