@@ -4,7 +4,8 @@
   "main": "app.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start:local": "node --watch ./src/server.js"
+    "start:dev": "dotenvx run --env-file=.env -- node --watch ./src/server.js",
+    "start:prod": "dotenvx run --env-file=.env.production -- node ./src/server.js"
   },
   "type": "module",
   "keywords": [],
@@ -12,6 +13,7 @@
   "license": "ISC",
   "description": "",
   "dependencies": {
+    "@dotenvx/dotenvx": "^1.51.1",
     "cors": "^2.8.5",
     "dotenv": "^17.2.3",
     "express": "^5.1.0",
