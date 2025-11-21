@@ -51,14 +51,17 @@ export default class TodoService {
   }
 
   static async addOne(title) {
+    if(!title)
+      throw new Error('title cannot be blank');
     const { insertId } = await db.query('INSERT INTO todos (title) VALUES (?)', [title])
     const todos = await db.query('SELECT * FROM todos WHERE id = ?', [insertId]);
     return todos[0];
   }
 
   static async deleteOne(id) {
-    const result = await db.query('DELETE FROM todos WHERE id = ?', [id]);
-    return result.affectedRows > 0;
+    const queryRes = await db.query('DELETE FROM todos WHERE id = ?', [id]);
+    if(!queryRes.affectedRows)
+      throw new Error('Not Found')
   }
 
   static async deleteAll(isCompleted) {
@@ -67,12 +70,15 @@ export default class TodoService {
 
     if (isCompleted) {
       sqlParts.push('WHERE complete = ?');
-      params.push(isCompleted ? '1' : '0');
+      params.push(isCompleted);
     }
 
     const sql = sqlParts.join(' ');
 
-    await db.query(sql, params);
+    const queryRes = await db.query(sql, params);
+
+    if (!queryRes.affectedRows)
+      throw new Error('Not found');
   }
 
   static async updateOne({ title, complete, id }) {
@@ -88,9 +94,8 @@ export default class TodoService {
       params.push(complete)
     }
     const sql = `UPDATE todos SET ${updates.join(', ')} WHERE id = ?`;
-    params.push(id)
+    params.push(id);
     await db.query(sql, params);
     return await db.query('SELECT * FROM todos WHERE id = ?', [id]);
-
   }
 }

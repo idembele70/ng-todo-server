@@ -23,7 +23,7 @@ export const getOneTodo = async (req, res, next) => {
 
 export const todoExistsByTitle = async (req, res, next) => {
   try {
-    const exists = TodoService.existsByTitle(req.query.title);
+    const exists = await TodoService.existsByTitle(req.query.title);
     res
       .status(200)
       .json({ exists });
@@ -34,7 +34,7 @@ export const todoExistsByTitle = async (req, res, next) => {
 
 export const addOneTodo = async (req, res, next) => {
   try {
-    const todo = await TodoService.addOne(req.body.title);
+    const todo = await TodoService.addOne(req.body.todo.title);
     res.status(201).json(todo);
   } catch (err) {
     next(err);
@@ -43,34 +43,29 @@ export const addOneTodo = async (req, res, next) => {
 
 export const deleteOneTodo = async (req, res, next) => {
   try {
-    const deleted = await TodoService.deleteOne(req.params.id)
-    if (deleted)
-      return res.sendStatus(204);
-    res.sendStatus(404);
+    await TodoService.deleteOne(req.params.id);
+    res.sendStatus(204);
   } catch (error) {
     next(error);
   }
 }
 
-export const deleteAllTodosController = async (req, res, next) => {
+export const deleteAllTodos = async (req, res, next) => {
   try {
-    const isCompleted = req.query.complete === 'true';
-    const deleted = await TodoService.deleteAll(isCompleted);
-    if (deleted)
-      res.sendStatus(204);
-    res.sendStatus(404);
+    await TodoService.deleteAll(req.query.complete);
+    res.sendStatus(204);
   } catch (error) {
-    next(error)
+    next(error);
   }
 }
 
 export const updateOneTodo = async (req, res, next) => {
   try {
-    const updatedTodo = await TodoService.updateOne({
+    const todo = await TodoService.updateOne({
       ...req.body,
       ...req.params,
     });
-    res.status(200).json(updatedTodo);
+    res.status(200).json({ todo });
   } catch (error) {
     next(error);
   }

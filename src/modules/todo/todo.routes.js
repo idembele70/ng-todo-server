@@ -1,7 +1,7 @@
 import { Router } from "express";
 import { 
   addOneTodo,
-  deleteAllTodosController,
+  deleteAllTodos,
   deleteOneTodo,
   getAllTodos,
   getOneTodo,
@@ -16,7 +16,7 @@ router
   .post('/new', addOneTodo)
 
   .get('/', getAllTodos)
-  .delete('/', deleteAllTodosController)
+  .delete('/', deleteAllTodos)
 
   .get('/:id', getOneTodo)
   .delete('/:id', deleteOneTodo)
