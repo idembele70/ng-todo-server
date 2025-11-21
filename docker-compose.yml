@@ -9,7 +9,7 @@ services:
       dockerfile: Dockerfile
       args:
         APP_DOCKER_PORT: ${APP_DOCKER_PORT}
-    env_file: .env
+    env_file: ${ENV_FILE}
     ports:
       - ${APP_LOCAL_PORT}:${APP_DOCKER_PORT}
 
@@ -17,7 +17,7 @@ services:
     image: mysql:8.1
     container_name: ng_todo_mysql_db
     env_file:
-      - .env
+      - ${ENV_FILE}
     environment:
       - MYSQL_ROOT_PASSWORD=${DB_ROOT_PASSWORD}
       - MYSQL_DATABASE=${DB_NAME}

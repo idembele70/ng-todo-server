@@ -21,4 +21,4 @@ ENV APP_DOCKER_PORT=${APP_DOCKER_PORT}
 EXPOSE ${APP_DOCKER_PORT}
 
 # Étape 6 : Commande de démarrage
-CMD ["npm", "run", "start"]
+CMD ["npm", "run", "start:prod"]
